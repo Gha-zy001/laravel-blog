@@ -5,7 +5,7 @@
     <header class="py-5 bg-light border-bottom mb-4">
         <div class="container">
             <div class="text-center my-5">
-                <h1 class="fw-bolder">{{__('welcome')}} </h1>
+                <h1 class="fw-bolder">{{ __('welcome') }} </h1>
                 @if (auth()->check())
                     <a class="btn btn-primary btn-lg" type="button" href="{{ route('posts.create') }}">@lang('translate.create_post')</a>
                 @endif
@@ -16,17 +16,6 @@
     <div class="row">
         <!-- Blog entries-->
         <div class="col-lg-8">
-            <!-- Featured blog post-->
-            {{-- <div class="card mb-4">
-                <a href="#!"><img class="card-img-top" src="https://dummyimage.com/850x350/dee2e6/6c757d.jpg" alt="..." /></a>
-                <div class="card-body">
-                    <div class="small text-muted">January 1, 2023</div>
-                    <h2 class="card-title">Featured Post Title</h2>
-                    <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reiciendis aliquid atque, nulla? Quos cum ex quis soluta, a laboriosam. Dicta expedita corporis animi vero voluptate voluptatibus possimus, veniam magni quis!</p>
-                    <a class="btn btn-primary" href="#!">Read more →</a>
-                </div>
-            </div> --}}
-            <!-- Nested row for non-featured blog posts-->
             <div class="row">
                 @foreach ($posts as $post)
                     <div class="col-6">
@@ -43,20 +32,17 @@
 
                             <div class="card-body">
                                 <div class="small text-muted">{{ $post->created_at->diffforhumans() }} </div>
-                                {{-- <div class="small text-muted">{{$post->created_at->format('d M Y  h:i:A')}} </div> --}}
-
                                 <h2 class="card-title h4">{{ $post->title }}</h2>
                                 <p class="card-text">{{ substr($post->content, 0, 20) }} </br> <small> created by :
                                         {{ $post->user->name }} </small></p>
-                                @if(count($post->categories) > 0)
-                                @foreach ($post->categories as $category)
-                                <span class="badge bg-secondary text-white mb-2">{{ $category->name }}</span>
-
-                                @endforeach
+                                @if (count($post->categories) > 0)
+                                    @foreach ($post->categories as $category)
+                                        <span class="badge bg-secondary text-white mb-2">{{ $category->name }}</span>
+                                    @endforeach
                                 @endif
                                 </br>
 
-                                <a class="btn btn-primary" href="#!">Read more →</a>
+                                <a class="btn btn-primary" href="{{ route('posts.show', $post->id) }}">Read more →</a>
                                 @if (auth()->id() && auth()->id() == $post->user_id)
                                     <a class="btn btn-danger" href="#"
                                         onclick="event.preventDefault();
@@ -116,8 +102,7 @@
                         <div class="col-sm-6">
                             <ul class="list-unstyled mb-0">
                                 <li><a href="#!">Web Design</a></li>
-                                <li><a href="#!">HTML</a></li>
-                                <li><a href="#!">Freebies</a></li>
+
                             </ul>
                         </div>
                         <div class="col-sm-6">

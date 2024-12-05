@@ -11,120 +11,135 @@ use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth')->except('index', 'show');
-    }
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        // n+1 problem  posts with user
-        //  $posts=Post::with('user')->get();
-        // foreach($posts as $post){
-        //     dd($post->user);
-        // }
-        //    dd($post->user());
-// user posts
-        $posts = Auth::user()->posts()->get();  //auth()->user()->posts;
+  public function __construct()
+  {
+    $this->middleware('auth')->except('index', 'show');
+  }
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    // n+1 problem  posts with user
+    //  $posts=Post::with('user')->get();
+    // foreach($posts as $post){
+    //     dd($post->user);
+    // }
+    //    dd($post->user());
+    // user posts
+    $posts = Auth::user()->posts()->get();  //auth()->user()->posts;
 
-        dD($posts);
-        //    dd($posts);
-    }
+    dD($posts);
+    //    dd($posts);
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $categories=Category::all();
-        return view('posts.create' ,compact('categories'));
-    }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    $categories = Category::all();
+    return view('posts.create', compact('categories'));
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(PostRequest $request)
-    {
-        // dd($request->all());
-        // dd($request->file('image'));
-        // dd($request->file('image')->getClientOriginalExtension());
-        $imageName=time().'.'.$request->file('image')->getClientOriginalExtension();
-        // dd($imageName);
-        // dd(public_path('storage/posts'));
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(PostRequest $request)
+  {
+    // dd($request->all());
+    // dd($request->file('image'));
+    // dd($request->file('image')->getClientOriginalExtension());
+    $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
+    // dd($imageName);
+    // dd(public_path('storage/posts'));
 
-        $request->file('image')->move(public_path('storage/posts'), $imageName);
+    $request->file('image')->move(public_path('storage/posts'), $imageName);
 
-        $post= Post::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            // auth()->user()->id
-            'user_id' => auth()->id(),
-            'image'=>$imageName
-        ]);
-        // dd($post);
+    $post = Post::create([
+      'title' => $request->title,
+      'content' => $request->content,
+      // auth()->user()->id
+      'user_id' => auth()->id(),
+      'image' => $imageName
+    ]);
+    // dd($post);
 
-        //attach [id,id,id,id]
-        $post->categories()->attach($request->categories);
-        return redirect()->route('home')->with('success', 'Post Created Successfully');
-    }
+    //attach [id,id,id,id]
+    $post->categories()->attach($request->categories);
+    return redirect()->route('home')->with('success', 'Post Created Successfully');
+  }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
+  /**
+   * Display the specified resource.
+   */
+  public function show(string $id)
+  {
+    $post = Post::with('categories')->find($id);
+    $categoryName = $post->category ? $post->category->name : 'No Category';
 
-        return "Hello From Show Website Post Id :" . $id;
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post)
-    {
-        $categories=Category::all();
-        $selectedCategories =$post->categories()->pluck('categories.id')->toArray();
-        // dd($selectedCategories);
-        return view('posts.edit', compact('post' , 'categories' , 'selectedCategories'));
+    if (!$post) {
+      return abort(404, 'Post not found');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(PostRequest $request, Post $post)
-    {
-        if($request->hasfile('image')){
-            if(file_exists(public_path($post->image_path))){
-                unlink(public_path($post->image_path));
-            }
-            $imageName=time().'.'.$request->file('image')->getClientOriginalExtension();
-            $request->file('image')->move(public_path('storage/posts'), $imageName);
+    return view('posts.blog-post', [
+      'post' => $post,
+      'categoryName' => $post->category ? $post->category->name : 'No category', // Handle category null value
+    ]);
+  }
 
-        }
-        // dd($request->all() , $post);
-        $post->update([
-            'title' => $request->title,
-            'content' => $request->content,
-            'user_id' => auth()->id(),
-            'image'=>$imageName ?? $post->image
-        ]);
-        //sync
-        $post->categories()->sync($request->categories);
-        return redirect()->route('home')->with('success', 'Post Updated Successfully');
-    }
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(Post $post)
+  {
+    $categories = Category::all();
+    $selectedCategories = $post->categories()->pluck('categories.id')->toArray();
+    // dd($selectedCategories);
+    return view('posts.edit', compact('post', 'categories', 'selectedCategories'));
+  }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Post $post)
-    {
-        if(file_exists(public_path($post->image_path))){
-            unlink(public_path($post->image_path));
-        }
-        $post->categories()->detach();
-        $post->delete();
-        return redirect()->route('home')->with('success', 'Post Deleted Successfully');
+  public function showComments()
+  {
+    // Define a list of random names
+    $randomNames = ['John Doe', 'Jane Smith', 'Alice', 'Bob', 'Charlie', 'Diana'];
+    return view('posts.blog-post', ['randomNames' => $randomNames]);
+  }
+
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(PostRequest $request, Post $post)
+  {
+    if ($request->hasfile('image')) {
+      if (file_exists(public_path($post->image_path))) {
+        unlink(public_path($post->image_path));
+      }
+      $imageName = time() . '.' . $request->file('image')->getClientOriginalExtension();
+      $request->file('image')->move(public_path('storage/posts'), $imageName);
     }
+    // dd($request->all() , $post);
+    $post->update([
+      'title' => $request->title,
+      'content' => $request->content,
+      'user_id' => auth()->id(),
+      'image' => $imageName ?? $post->image
+    ]);
+    //sync
+    $post->categories()->sync($request->categories);
+    return redirect()->route('home')->with('success', 'Post Updated Successfully');
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(Post $post)
+  {
+    if (file_exists(public_path($post->image_path))) {
+      unlink(public_path($post->image_path));
+    }
+    $post->categories()->detach();
+    $post->delete();
+    return redirect()->route('home')->with('success', 'Post Deleted Successfully');
+  }
 }

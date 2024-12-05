@@ -9,7 +9,7 @@ class HomeController extends Controller
 {
     public function __invoke()
     {
-        $name="Raneem";
+        $name="Ahmed";
         $age=20;
         return view('dashboard.index', compact('name','age'));
     }

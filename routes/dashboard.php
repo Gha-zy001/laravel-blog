@@ -18,26 +18,11 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-// resource
-//invoke
 
-// Route::get('/', function () {
-//  $data=[
-//      'name'=>'ahmed',
-//      'age'=>20
-//     ];
-// return view('dashboard.index')->with([
-//     'name'=>$name,
-//     'age'=>$age
-// ]);
-// return view('dashboard.index' ,with($data));
-// });
-// Route::group(['middleware'=>'auth'] , function(){
-Route::get('/', HomeController::class);
+Route::get('/', HomeController::class)->name('index');
 Route::resource('categories', CategoryController::class);
 Route::resource('posts', PostController::class);
 Route::resource('users', UserController::class);
 
 
-    // Route::get('/posts/create' , [PostController::class , 'create']);
-// });
+

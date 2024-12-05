@@ -25,7 +25,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // dd(LaravelLocalization::setLocale());
+    // dd(LaravelLocalization::setLocale());
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
@@ -36,15 +36,15 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/api.php'));
 
             Route::middleware(['web','localeSessionRedirect', 'localizationRedirect', 'localeViewPath' ])
-//                ->prefix(LaravelLocalization::setLocale())
+            ->prefix(LaravelLocalization::setLocale())
                 ->group(base_path('routes/web.php'));
 
 
 
             Route::middleware(['web' ,'is-admin' , 'auth'])
-                ->prefix('dashboard')
-                ->name('dashboard.')
-                ->group(base_path('routes/dashboard.php'));
+            ->prefix('dashboard')
+            ->name('dashboard.')
+            ->group(base_path('routes/dashboard.php'));
         });
     }
 }

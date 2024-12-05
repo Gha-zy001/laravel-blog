@@ -1,33 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    @include('dashboard.layouts.head')
-</head>
-<body class="sb-nav-fixed">
-@include('dashboard.layouts.navbar')
-@include('dashboard.layouts.sidebar')
-{{--    <footer class="py-4 bg-light mt-auto">--}}
-{{--        <div class="container-fluid px-4">--}}
-{{--            <div class="d-flex align-items-center justify-content-between small">--}}
-{{--                <div class="text-muted">Copyright &copy; Your Website 2023</div>--}}
-{{--                <div>--}}
-{{--                    <a href="#">Privacy Policy</a>--}}
-{{--                    &middot;--}}
-{{--                    <a href="#">Terms &amp; Conditions</a>--}}
-{{--                </div>--}}
-{{--            </div>--}}
-{{--        </div>--}}
-{{--    </footer>--}}
+    <head>
+        @include('dashboard.layouts.head')
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-        crossorigin="anonymous"></script>
-<script src="{{asset('dashboard_assets/js/scripts.js')}}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-<script src="assets/demo/chart-area-demo.js"></script>
-<script src="assets/demo/chart-bar-demo.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
-        crossorigin="anonymous"></script>
-<script src="{{asset('dashboard_assets/js/datatables-simple-demo.js')}}></script>
-</body>
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+          @include('dashboard.layouts.sidebar')
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                @include('dashboard.layouts.navbar')
+                @include('dashboard.layouts.notifications')
+
+                    @yield('content')
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>        <!-- Core theme JS-->
+        <!-- Core theme JS-->
+        <script src="{{asset('dashboard_assets/js/scripts.js')}}"></script>
+        @stack('scripts')
+    </body>
 </html>
-
