@@ -19,10 +19,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', HomeController::class)->name('index');
-Route::resource('categories', CategoryController::class);
-Route::resource('posts', PostController::class);
-Route::resource('users', UserController::class);
+// Route::get('/', HomeController::class)->name('index');
+// Route::resource('categories', CategoryController::class);
+// Route::resource('posts', PostController::class);
+// Route::resource('users', UserController::class);
 
 
 

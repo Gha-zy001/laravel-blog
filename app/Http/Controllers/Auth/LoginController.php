@@ -43,14 +43,13 @@ class LoginController extends Controller
     {
 
         if (auth()->user()->is_admin == 1) {
-            return redirect()->route('dashboard.index');
+            return redirect()->route('filament.admin.pages.dashboard');
 
         }
         return redirect()->route('home');
     }
     public function username()
     {
-        // dd(request()->all());
         $input = request('phone_email');
         $type = filter_var($input, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
         request()->merge([$type => $input]);
